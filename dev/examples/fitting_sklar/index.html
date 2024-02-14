@@ -9,13 +9,29 @@ X₃ = Gamma()
 X₄ = Normal()
 C = SurvivalCopula(FrankCopula(4,7),(2,4))
 D = SklarDist(C,(X₁,X₂,X₃,X₄))
-data = rand(D,1000)
-
-# The fit function uses a type as its first argument that describes the structure of the model : 
-MyCop = SurvivalCopula{4,ClaytonCopula,(2,4)}
+data = rand(D,1000)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4×1000 Matrix{Float64}:
+ 0.541063   4.00399    1.29818   1.70761    …   0.921571  0.695114  0.121623
+ 2.11778    1.23779    1.00592   1.68825        1.78698   2.05109   6.66186
+ 0.453307   2.94104    1.90868   0.939072       0.525466  0.554132  0.0776826
+ 1.39718   -0.564237  -0.647452  0.0467274     -0.425753  0.456186  1.99678</code></pre><p>The fit function uses a type as its first argument that describes the structure of the model : </p><pre><code class="language-julia hljs">MyCop = SurvivalCopula{4,ClaytonCopula,(2,4)}
 MyMargs = Tuple{LogNormal,Pareto,Gamma,Normal}
 MyD = SklarDist{MyCop, MyMargs}
-fitted_model = fit(MyD,data)
+fitted_model = fit(MyD,data)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">SklarDist{SurvivalCopula{4, ClaytonCopula{4, Float64}, Tuple{Int64, Int64}}, Tuple{Distributions.LogNormal{Float64}, Distributions.Pareto{Float64}, Distributions.Gamma{Float64}, Distributions.Normal{Float64}}}(
+C: SurvivalCopula{4, ClaytonCopula{4, Float64}, Tuple{Int64, Int64}}(
+C: ClaytonCopula{4, Float64}(
+G: Copulas.ClaytonGenerator{Float64}(2.598339565206052)
+)
 
-# Another posisbility is to use an empirical copula and only fit the marginals: 
-other_fitted_model = fit(SklarDist{EmpiricalCopula,MyMargs},data)</code></pre><p>This simple interface leverages indeed the <code>fit</code> function from <code>Distributions.jl</code>. From their documentation, this function is not supposed to use a particular method but to fit &quot;dirt and quick&quot; some distributions. </p><p>So you have to be careful: the fit method might not be the same for different copulas or different marginals. For example, the Archimedean copulas are fitted through an inversion of the Kendall tau function, while the Gaussian copula is fitted by maximum likelihood. </p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../dependence_measures/">« Dependence measures</a><a class="docs-footer-nextpage" href="../turing/">Bayesian inference with <code>Turing.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Tuesday 13 February 2024 14:24">Tuesday 13 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+indices: (2, 4)
+)
+
+m: (Distributions.LogNormal{Float64}(μ=-0.03716389285180641, σ=1.0532287649263408), Distributions.Pareto{Float64}(α=0.9544974120043566, θ=1.002845187217357), Distributions.Gamma{Float64}(α=1.0021613095258857, θ=0.9961781272821049), Distributions.Normal{Float64}(μ=-0.015636826857653094, σ=1.0037960680122935))
+)
+</code></pre><p>Another possibility is to use an empirical copula and only fit the marginals: </p><pre><code class="language-julia hljs">other_fitted_model = fit(SklarDist{EmpiricalCopula,MyMargs},data)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">SklarDist{EmpiricalCopula{4, LinearAlgebra.Transpose{Float64, Matrix{Float64}}}, Tuple{Distributions.LogNormal{Float64}, Distributions.Pareto{Float64}, Distributions.Gamma{Float64}, Distributions.Normal{Float64}}}(
+C: EmpiricalCopula{4, LinearAlgebra.Transpose{Float64, Matrix{Float64}}}(
+u: [0.2947052947052947 0.8971028971028971 … 0.3866133866133866 0.024975024975024976; 0.5114885114885115 0.18581418581418582 … 0.4875124875124875 0.8451548451548452; 0.36063936063936064 0.949050949050949 … 0.43356643356643354 0.07692307692307693; 0.9180819180819181 0.2867132867132867 … 0.6943056943056943 0.975024975024975]
+)
+
+m: (Distributions.LogNormal{Float64}(μ=-0.03716389285180641, σ=1.0532287649263408), Distributions.Pareto{Float64}(α=0.9544974120043566, θ=1.002845187217357), Distributions.Gamma{Float64}(α=1.0021613095258857, θ=0.9961781272821049), Distributions.Normal{Float64}(μ=-0.015636826857653094, σ=1.0037960680122935))
+)
+</code></pre><p>This simple interface leverages indeed the <code>fit</code> function from <code>Distributions.jl</code>. From their documentation, this function is not supposed to use a particular method but to fit &quot;dirt and quick&quot; some distributions. </p><p>So you have to be careful: the fit method might not be the same for different copulas or different marginals. For example, the Archimedean copulas are fitted through an inversion of the Kendall tau function, while the Gaussian copula is fitted by maximum likelihood. </p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../dependence_measures/">« Dependence measures</a><a class="docs-footer-nextpage" href="../turing/">Bayesian inference with <code>Turing.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Wednesday 14 February 2024 15:55">Wednesday 14 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
